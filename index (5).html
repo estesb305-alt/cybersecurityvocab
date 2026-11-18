@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cyber Defender: Vocab Training</title>
+<style>
+:root{
+  --bg:#EEF3F8; --surface:#FFFFFF; --ink:#0E2A47; --muted:#4A6380; --line:#C9D6E4;
+  --accent:#1E9E63; --accent-ink:#FFFFFF; --accent-soft:#DDF3E8;
+  --wrong:#C2412D; --wrong-soft:#FBE6E1; --navy:#0E2A47; --navy-ink:#FFFFFF;
+  --gold:#E0A100; --gold-soft:#FFF3CC;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1A2E; --surface:#12263F; --ink:#E6EEF7; --muted:#9DB2CA; --line:#24405F;
+    --accent:#3CCB86; --accent-ink:#06210F; --accent-soft:#143A2C;
+    --wrong:#F07A64; --wrong-soft:#3A1E1A; --navy:#1B3A5E; --navy-ink:#E6EEF7;
+    --gold:#FFC93C; --gold-soft:#3A3014;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1A2E; --surface:#12263F; --ink:#E6EEF7; --muted:#9DB2CA; --line:#24405F;
+  --accent:#3CCB86; --accent-ink:#06210F; --accent-soft:#143A2C;
+  --wrong:#F07A64; --wrong-soft:#3A1E1A; --navy:#1B3A5E; --navy-ink:#E6EEF7;
+  --gold:#FFC93C; --gold-soft:#3A3014;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;font-size:18px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 28px}
+h1{font-size:1.7rem;line-height:1.2;margin:0}
+h2{font-size:1.4rem;line-height:1.25;margin:0 0 12px}
+p{margin:0 0 12px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.brand .shield{font-size:2.4rem}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.brand .grow{flex:1}
+
+.vault{background:var(--navy);color:var(--navy-ink);border-radius:18px;padding:18px;margin-bottom:22px}
+.rankline{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rank{font-size:1.35rem;font-weight:700}
+.xpbar{height:12px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden;margin:10px 0 16px}
+.xpbar i{display:block;height:100%;background:var(--gold);transition:width .6s ease}
+.count{font-weight:700;margin-bottom:10px}
+.locks{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.lock{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border-radius:10px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15)}
+.lock.on{background:var(--accent);border-color:var(--accent)}
+.vault small{display:block;margin-top:10px;opacity:.8;font-size:.85rem}
+
+.modes{display:grid;gap:12px}
+.mode{display:flex;gap:14px;align-items:center;text-align:left;padding:16px;border:2px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:68px;width:100%;transition:transform .15s ease,border-color .15s ease}
+.mode:hover{border-color:var(--accent);transform:translateY(-2px)}
+.mode.featured{border-color:var(--gold);background:var(--gold-soft)}
+.mode .ic{font-size:1.9rem;flex:none}
+.mode strong{display:block;font-size:1.1rem}
+.mode .d{color:var(--muted);font-size:.95rem}
+.badge{display:inline-block;font-size:.75rem;font-weight:700;background:var(--gold);color:#3A2A00;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:2px}
+
+.btn{font:inherit;font-weight:600;padding:12px 18px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:48px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:8px 14px;min-height:42px;font-size:.95rem}
+.btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{font-weight:700;font-variant-numeric:tabular-nums;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.95rem}
+.pill.fire{border-color:var(--gold);background:var(--gold-soft)}
+.muted{color:var(--muted)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+.card{display:block;width:100%;border:none;background:none;padding:0;cursor:pointer;font:inherit;color:inherit;perspective:1200px;margin-bottom:16px}
+.card-inner{display:grid;transition:transform .45s ease;transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:260px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px 22px;border-radius:18px;background:var(--surface);border:2px solid var(--line);text-align:center}
+.face.back{transform:rotateY(180deg);background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+.face .big{font-size:1.75rem;font-weight:700;line-height:1.2}
+.face .def{font-size:1.15rem;max-width:60ch}
+.face small{opacity:.7;font-size:.85rem}
+
+.prompt{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;font-size:1.15rem}
+.prompt .lbl{color:var(--muted);font-size:.9rem;display:block;margin-bottom:6px}
+.prompt.term{font-size:1.6rem;font-weight:700;text-align:center}
+.choices{display:grid;gap:10px}
+.choice{text-align:left;font:inherit;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:54px;width:100%;transition:border-color .15s ease}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.correct{background:var(--accent-soft);border-color:var(--accent)}
+.choice.wrong{background:var(--wrong-soft);border-color:var(--wrong)}
+.feedback{margin:14px 0;font-weight:600;min-height:1.5em}
+.feedback.ok{color:var(--accent)}
+.feedback.no{color:var(--wrong)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font:inherit;font-weight:600;padding:10px 14px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:46px}
+.chip.sel,.choice.sel{border-color:var(--accent);background:var(--accent-soft)}
+.chip.flash,.choice.flash{border-color:var(--wrong);background:var(--wrong-soft)}
+.hidden{display:none}
+
+.timerbar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-bottom:16px}
+.timerbar i{display:block;height:100%;background:var(--accent);width:100%}
+.result{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px;text-align:center}
+.result .emoji{font-size:3rem;line-height:1}
+.result .score{font-size:2.4rem;font-weight:700;line-height:1.1;margin:8px 0 6px}
+.result .xp{display:inline-block;font-weight:700;background:var(--gold-soft);border:2px solid var(--gold);border-radius:999px;padding:4px 14px;margin:6px 0 10px}
+.review{display:grid;gap:10px;margin-bottom:16px}
+.review div{background:var(--surface);border:2px solid var(--line);border-left:6px solid var(--wrong);border-radius:12px;padding:14px 16px}
+.review strong{display:block}
+
+/* Firewall Defense */
+.arena{position:relative;height:320px;border-radius:18px;background:var(--navy);overflow:hidden;margin-bottom:14px}
+.arena::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px}
+.threat{position:absolute;left:12px;right:12px;top:0;background:var(--wrong-soft);color:var(--ink);border:2px solid var(--wrong);border-radius:14px;padding:12px 14px;font-size:1rem;line-height:1.4}
+.threat b{display:block;color:var(--wrong);font-size:.85rem;margin-bottom:2px}
+.threat.blast{animation:blast .35s ease forwards}
+.wall{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;justify-content:center;gap:6px;background:repeating-linear-gradient(90deg,#B5512E 0 38px,#8E3C20 38px 42px);color:#fff;font-weight:700;font-size:.9rem;letter-spacing:.02em}
+.wall.hit{animation:shake .4s}
+.lives{font-size:1.2rem;letter-spacing:2px}
+
+/* Feedback motion */
+.pop{animation:pop .3s ease}
+.shake{animation:shake .4s}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes blast{to{transform:scale(1.15);opacity:0}}
+@keyframes rise{0%{opacity:0;transform:translate(-50%,10px)}15%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-20px)}}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:var(--navy-ink);border:2px solid var(--gold);font-weight:700;border-radius:999px;padding:8px 18px;pointer-events:none;animation:rise 1.4s ease forwards;z-index:20;white-space:nowrap}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+/* Phish or Legit */
+.mail{background:var(--surface);border:2px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:16px}
+.mail-head{background:var(--navy);color:var(--navy-ink);padding:12px 16px;font-size:.9rem}
+.mail-head span{opacity:.75}
+.mail-head b{display:block;font-size:1.25rem;margin-top:2px}
+.mail-body{padding:18px 16px;font-size:1.1rem}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vbtn{font:inherit;font-weight:700;font-size:1.15rem;min-height:64px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.vbtn:hover:not(:disabled){border-color:var(--accent)}
+.vbtn:disabled{cursor:default}
+.vbtn.correct{background:var(--accent-soft);border-color:var(--accent)}
+.vbtn.wrong{background:var(--wrong-soft);border-color:var(--wrong)}
+.explain{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:1rem}
+
+/* Code Breaker */
+.slots{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 16px;margin:0 0 16px;font-size:clamp(14px,3.8vw,20px)}
+.word{display:flex;gap:3px}
+.slot{width:1.5em;height:1.9em;display:flex;align-items:center;justify-content:center;border-radius:7px;background:var(--navy);color:var(--gold);font-weight:700;font-family:ui-monospace,Menlo,Consolas,monospace;border:2px solid var(--navy)}
+.slot.open{background:var(--accent-soft);color:var(--ink);border-color:var(--accent)}
+.slot.punct{background:none;border-color:transparent;color:var(--ink);width:auto}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px;margin-bottom:10px}
+.key{font:inherit;font-weight:700;min-height:46px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.key:hover:not(:disabled){border-color:var(--accent)}
+.key:disabled{cursor:default}
+.key.hit{background:var(--accent-soft);border-color:var(--accent)}
+.key.miss{background:var(--wrong-soft);border-color:var(--wrong);opacity:.6}
+
+footer{max-width:760px;margin:0 auto;padding:0 16px 24px;color:var(--muted);font-size:.85rem;text-align:center}
+@media (prefers-reduced-motion:reduce){
+  .pop,.shake,.wall.hit,.mode:hover{animation:none;transform:none}
+  .card-inner,.xpbar i{transition:none}
+}
+</style>
+</head>
+<body>
+<main class="wrap" id="app" aria-live="polite"></main>
+<footer>Learning activity created by B.Estes assisted with AI, used with permission.</footer>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+// ===== Vocabulary list: swap these out for a new unit =====
+const VOCAB = [
+  {term:"Computing Innovation", def:"Includes a program as an integral part of its function. Can be physical (e.g., self-driving car), non-physical computing software (e.g., picture editing software), or non-physical computing concepts (e.g., e-commerce)."},
+  {term:"Decryption", def:"A process that reverses encryption, taking a secret message and reproducing the original plain text."},
+  {term:"Encryption", def:"A process of encoding messages to keep them secret, so only “authorized” parties can read them."},
+  {term:"Freeware", def:"Untrustworthy (often free) downloads from freeware or shareware sites can contain malware."},
+  {term:"Keylogging", def:"The use of a program to record every keystroke made by a computer user in order to gain fraudulent access to passwords and other confidential information."},
+  {term:"Malware", def:"Software intended to damage a computing system or to take partial control over its operation."},
+  {term:"Multi-factor Authentication", def:"A system that requires at least two steps to unlock protected information; each step adds a new layer of security that must be broken to gain unauthorized access."},
+  {term:"Personally Identifiable Information (PII)", def:"Information about an individual that identifies, links, relates, or describes them."},
+  {term:"Phishing", def:"A technique that attempts to trick a user into providing personal information. That personal information can then be used to access sensitive online resources, such as bank accounts and emails."},
+  {term:"Public Key Encryption", def:"Pairs a public key for encryption and a private key for decryption. The sender does not need the receiver’s private key to encrypt a message, but the receiver’s private key is required to decrypt the message."},
+  {term:"Rogue Access Point", def:"A wireless access point that gives unauthorized access to secure networks."},
+  {term:"Strong Password", def:"Something that is easy for a user to remember but would be difficult for someone else to guess based on knowledge of that user."},
+  {term:"Symmetric Key Encryption", def:"Involves one key for both encryption and decryption."},
+  {term:"Virus", def:"A malicious program that can copy itself and gain access to a computer in an unauthorized way. Computer viruses often attach themselves to legitimate programs and start running independently on a computer."}
+];
+
+// ===== Scenarios: each answer must match a term above =====
+const SCENARIOS = [
+  {text:"You get an email from “your bank” asking you to click a link and confirm your password.", answer:"Phishing"},
+  {text:"A hidden program on a public library computer quietly records everything you type, including your passwords.", answer:"Keylogging"},
+  {text:"To log into your school account, you type your password and then enter a code that was texted to your phone.", answer:"Multi-factor Authentication"},
+  {text:"You download a free “game speed booster” from an unknown website, and it secretly installs harmful software.", answer:"Freeware"},
+  {text:"Someone secretly plugs their own Wi-Fi router into a company’s network so outsiders can connect to it.", answer:"Rogue Access Point"},
+  {text:"A harmful program attaches itself to a real word processor and copies itself onto other computers.", answer:"Virus"},
+  {text:"A quiz app asks for your full name, home address, and birthday before you can play.", answer:"Personally Identifiable Information (PII)"},
+  {text:"Instead of your pet’s name, you choose “Purple-Tractor-Moon-42” because you can remember it but no one could guess it.", answer:"Strong Password"},
+  {text:"Two friends agree on one secret codeword that they both use to scramble and unscramble their notes.", answer:"Symmetric Key Encryption"},
+  {text:"A website shares a key that anyone can use to lock messages to it, but only the website’s own secret key can unlock them.", answer:"Public Key Encryption"},
+  {text:"After installing a sketchy program, someone else can control parts of your computer and your files are damaged.", answer:"Malware"},
+  {text:"You receive a scrambled message and use the key to turn it back into the original readable text.", answer:"Decryption"},
+  {text:"Before sending “MEET AT NOON,” you turn it into “PHHW DW QRRQ” so only your friend can read it.", answer:"Encryption"},
+  {text:"A self-driving car uses a program to steer, brake, and watch for pedestrians.", answer:"Computing Innovation"}
+];
+
+// ===== Ranks =====
+const RANKS = [
+  {xp:0,    name:"Rookie Analyst",     icon:"🐣"},
+  {xp:100,  name:"Firewall Fighter",   icon:"🧱"},
+  {xp:250,  name:"Phish Finder",       icon:"🎣"},
+  {xp:450,  name:"Encryption Expert",  icon:"🔐"},
+  {xp:700,  name:"Cyber Defender",     icon:"🛡️"},
+  {xp:1000, name:"Security Legend",    icon:"🏆"}
+];
+
+// ===== State (this session only) =====
+const mastered = new Set();
+let xp = 0, streak = 0, bestStreak = 0, bestSpeed = 0, bestWave = 0, soundOn = true;
+let timer = null;
+const app = document.getElementById("app");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const defOf = t => VOCAB.find(v => v.term === t).def;
+const otherTerms = (t, n) => shuffle(VOCAB.filter(v => v.term !== t)).slice(0, n).map(v => v.term);
+const rankFor = x => RANKS.filter(r => x >= r.xp).pop();
+const nextRank = x => RANKS.find(r => r.xp > x);
+function stopTimer(){ if (timer){ clearInterval(timer); timer = null; } }
+function show(html){ stopTimer(); document.onkeydown = null; app.innerHTML = html; window.scrollTo(0,0); }
+function mark(term, ok){ ok ? mastered.add(term) : mastered.delete(term); }
+function anim(el, cls){ if (!el || reduceMotion) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+// ===== Sound (Web Audio, no files needed) =====
+let actx = null;
+function tone(freq, dur, type="sine", when=0, vol=.15){
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t = actx.currentTime + when, o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + dur);
+  } catch(e){}
+}
+const sfx = {
+  good(){ tone(660,.12,"triangle"); tone(990,.16,"triangle",.08); },
+  bad(){ tone(180,.25,"sawtooth",0,.08); },
+  flip(){ tone(520,.06,"sine",0,.08); },
+  levelUp(){ [523,659,784,1047].forEach((f,i)=>tone(f,.2,"triangle",i*.1)); },
+  win(){ [784,988,1175,1568].forEach((f,i)=>tone(f,.18,"square",i*.09,.06)); },
+  boom(){ tone(120,.35,"square",0,.1); }
+};
+
+// ===== Toasts + confetti =====
+function toast(text){
+  const t = document.createElement("div");
+  t.className = "toast"; t.textContent = text;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1400);
+}
+const cv = document.getElementById("confetti"), cx = cv.getContext("2d");
+let confettiId = null;
+function confetti(){
+  if (reduceMotion) return;
+  cv.width = innerWidth; cv.height = innerHeight;
+  const colors = ["#3CCB86","#FFC93C","#4DA3FF","#F07A64","#B78CFF"];
+  const parts = Array.from({length:140}, () => ({
+    x: innerWidth/2 + (Math.random()-.5)*120, y: innerHeight*.35,
+    vx:(Math.random()-.5)*12, vy:Math.random()*-12-4, r:Math.random()*6+4,
+    c:colors[Math.floor(Math.random()*colors.length)], a:Math.random()*Math.PI, va:(Math.random()-.5)*.3
+  }));
+  const start = performance.now();
+  cancelAnimationFrame(confettiId);
+  (function frame(now){
+    cx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p => { p.vy += .35; p.x += p.vx; p.y += p.vy; p.a += p.va;
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.a); cx.fillStyle = p.c; cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6); cx.restore(); });
+    if (now - start < 2600) confettiId = requestAnimationFrame(frame); else cx.clearRect(0,0,cv.width,cv.height);
+  })(start);
+}
+
+// ===== XP + streaks =====
+function addXP(n){
+  const before = rankFor(xp);
+  xp += n;
+  const after = rankFor(xp);
+  if (after !== before){
+    setTimeout(() => { sfx.levelUp(); confetti(); toast(`${after.icon} Rank up: ${after.name}!`); }, 300);
+  }
+  updateHud();
+}
+function correct(term){
+  streak++; bestStreak = Math.max(bestStreak, streak);
+  const bonus = streak >= 3 ? 5 : 0;
+  addXP(10 + bonus);
+  sfx.good();
+  if (streak === 3 || streak === 5 || streak % 10 === 0) toast(`🔥 ${streak} in a row! Bonus XP`);
+  else toast(`+${10+bonus} XP`);
+  mark(term, true);
+}
+function wrong(term){
+  if (streak >= 3) toast(`💥 Streak broken at ${streak}`);
+  streak = 0; sfx.bad(); mark(term, false); updateHud();
+}
+function hud(extra=""){
+  return `<div class="hud">${extra}<span class="pill" id="xpPill">⭐ ${xp} XP</span><span class="pill ${streak>=3?"fire":""}" id="stPill">🔥 ${streak}</span></div>`;
+}
+function updateHud(){
+  const a = document.getElementById("xpPill"), b = document.getElementById("stPill");
+  if (a){ a.textContent = `⭐ ${xp} XP`; anim(a,"pop"); }
+  if (b){ b.textContent = `🔥 ${streak}`; b.classList.toggle("fire", streak >= 3); }
+}
+function topBar(extra=""){
+  return `<div class="bar"><button class="btn small" data-home>⟵ Home</button>${hud(extra)}</div>`;
+}
+function wireHome(){ app.querySelectorAll("[data-home]").forEach(b => b.onclick = home); }
+
+// ===== Home =====
+function home(){
+  const n = mastered.size, r = rankFor(xp), nx = nextRank(xp);
+  const pct = nx ? Math.round((xp - r.xp)/(nx.xp - r.xp)*100) : 100;
+  const locks = VOCAB.map(v => {
+    const on = mastered.has(v.term);
+    return `<div class="lock ${on?"on":""}" title="${esc(v.term)}" aria-label="${esc(v.term)}: ${on?"mastered":"not yet"}">${on?"🔒":"🔓"}</div>`;
+  }).join("");
+  show(`
+    <div class="brand"><span class="shield" aria-hidden="true">🛡️</span>
+      <div class="grow"><h1>Cyber Defender</h1><p>AP CSP cybersecurity vocab · ${VOCAB.length} terms</p></div>
+      <button class="btn small" id="snd" aria-pressed="${soundOn}" aria-label="Sound">${soundOn?"🔊":"🔇"}</button></div>
+    <section class="vault">
+      <div class="rankline"><span class="rank">${r.icon} ${r.name}</span><span>⭐ ${xp} XP${nx?` · ${nx.xp - xp} to ${nx.name}`:" · Max rank!"}</span></div>
+      <div class="xpbar"><i style="width:${pct}%"></i></div>
+      <div class="count">${n} of ${VOCAB.length} terms locked down${bestStreak?` · Best streak 🔥 ${bestStreak}`:""}</div>
+      <div class="locks">${locks}</div>
+      <small>Get a term right in any mode to lock it. Miss it and it unlocks again.</small>
+    </section>
+    <div class="modes">
+      <button class="mode featured" data-m="fire"><span class="ic">🧱</span><span><strong>Firewall Defense<span class="badge">Arcade</span></strong><span class="d">Attacks are falling toward your firewall. Name them before they hit!${bestWave?` Best: ${bestWave} blocked`:""}</span></span></button>
+      <button class="mode" data-m="phish"><span class="ic">🎣</span><span><strong>Phish or Legit?</strong><span class="d">Check each security email. Does the definition really match the term?</span></span></button>
+      <button class="mode" data-m="match"><span class="ic">🧩</span><span><strong>Matching</strong><span class="d">Pair 6 terms with their definitions. Beat the clock.</span></span></button>
+      <button class="mode" data-m="code"><span class="ic">🔐</span><span><strong>Code Breaker</strong><span class="d">Decrypt the hidden term one letter at a time before you’re locked out.</span></span></button>
+      <button class="mode" data-m="scen"><span class="ic">🕵️</span><span><strong>Scenario challenge</strong><span class="d">Crack the case: which term is behind each situation?</span></span></button>
+      <button class="mode" data-m="speed"><span class="ic">⚡</span><span><strong>Speed round</strong><span class="d">60 seconds. How many can you get?${bestSpeed?` Best: ${bestSpeed}`:""}</span></span></button>
+    </div>`);
+  const go = {fire:firewall, phish:()=>phishOrLegit(VOCAB), match:matching, code:codebreaker, scen:scenarios, speed:speed};
+  app.querySelectorAll("[data-m]").forEach(b => b.onclick = go[b.dataset.m]);
+  document.getElementById("snd").onclick = () => { soundOn = !soundOn; home(); if (soundOn) sfx.flip(); };
+}
+
+// ===== End screen + review =====
+function verdict(p){
+  if (p >= 1)   return ["🏆","Flawless! The hackers never stood a chance."];
+  if (p >= .85) return ["🛡️","Network secure! Excellent defending."];
+  if (p >= .6)  return ["💪","Solid work. A few threats slipped by."];
+  if (p >= .3)  return ["🔧","Firewall needs patching. Review and try again!"];
+  return ["🚨","System breached! Hit the review and get back in there."];
+}
+function endScreen({title, score, detail, missed, replay, pct, xpEarned}){
+  const m = [...new Set(missed)];
+  const [emoji, line] = verdict(pct);
+  if (pct >= .85){ confetti(); sfx.win(); }
+  show(`
+    ${topBar()}
+    <div class="result">
+      <div class="emoji" aria-hidden="true">${emoji}</div>
+      <div class="score">${esc(score)}</div>
+      <p><strong>${esc(line)}</strong></p>
+      <p class="muted">${esc(title)} · ${esc(detail)}</p>
+      ${xpEarned ? `<div class="xp">⭐ +${xpEarned} XP earned</div>` : ""}
+      <p>${m.length ? `You missed ${m.length} term${m.length>1?"s":""}.` : "No missed terms!"}</p>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="again">Play again</button>
+      ${m.length ? `<button class="btn" id="rev">Review missed terms</button>` : ""}
+      <button class="btn" data-home>Home</button>
+    </div>`);
+  wireHome();
+  document.getElementById("again").onclick = replay;
+  if (m.length) document.getElementById("rev").onclick = () => review(m, replay);
+}
+function review(terms, replay){
+  show(`
+    ${topBar()}
+    <h2>Review missed terms</h2>
+    <div class="review">${terms.map(t => `<div><strong>${esc(t)}</strong>${esc(defOf(t))}</div>`).join("")}</div>
+    <div class="row">
+      <button class="btn primary" id="fc">Practice these in Phish or Legit</button>
+      <button class="btn" id="again">Play again</button>
+      <button class="btn" data-home>Home</button>
+    </div>`);
+  wireHome();
+  document.getElementById("fc").onclick = () => phishOrLegit(VOCAB.filter(v => terms.includes(v.term)));
+  document.getElementById("again").onclick = replay;
+}
+
+// ===== Firewall Defense (arcade) =====
+function firewall(){
+  let lives = 3, blocked = 0, fallMs = 14000, busy = false, last = null, startXP = xp;
+  let threatStart = 0, current = null;
+  const missed = [];
+  show(`
+    ${topBar(`<span class="pill" id="blk">🧱 0</span>`)}
+    <p class="muted">Pick the term that matches the incoming attack before it reaches your firewall. Each one you block makes the next fall a little faster!</p>
+    <div class="arena" id="arena">
+      <div class="threat" id="threat"></div>
+      <div class="wall" id="wall"><span>FIREWALL</span><span class="lives" id="lives">🛡️🛡️🛡️</span></div>
+    </div>
+    <div class="choices" id="fc"></div>`);
+  wireHome();
+  const arena = document.getElementById("arena"), threat = document.getElementById("threat"), wall = document.getElementById("wall");
+  function spawn(){
+    let v; do { v = VOCAB[Math.floor(Math.random()*VOCAB.length)]; } while (v === last);
+    last = current = v;
+    threat.className = "threat";
+    threat.innerHTML = `<b>⚠️ Incoming attack #${blocked + 4 - lives}</b>${esc(v.def)}`;
+    threat.style.transform = "translateY(0)";
+    const pool = shuffle([v.term, ...otherTerms(v.term, 3)]);
+    const fc = document.getElementById("fc");
+    fc.innerHTML = pool.map(t => `<button class="choice" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+    fc.querySelectorAll(".choice").forEach(b => b.onclick = () => answer(b));
+    threatStart = Date.now(); busy = false;
+  }
+  function damage(){
+    lives--; missed.push(current.term); wrong(current.term); sfx.boom();
+    document.getElementById("lives").textContent = "🛡️".repeat(lives) + "💔".repeat(3 - lives);
+    anim(wall, "hit");
+  }
+  function answer(b){
+    if (busy) return; busy = true;
+    const ok = b.dataset.t === current.term;
+    if (ok){
+      blocked++; b.classList.add("correct"); correct(current.term);
+      document.getElementById("blk").textContent = `🧱 ${blocked}`;
+      threat.classList.add("blast");
+      fallMs = Math.max(6000, fallMs * 0.97); // each correct answer makes attacks fall about 3% faster
+    } else {
+      b.classList.add("wrong");
+      document.querySelector(`#fc [data-t="${CSS.escape(current.term)}"]`).classList.add("correct");
+      damage();
+    }
+    setTimeout(after, ok ? 450 : 1100);
+  }
+  function after(){ if (lives <= 0) return finish(); spawn(); }
+  function finish(){
+    stopTimer();
+    if (blocked > bestWave){ bestWave = blocked; }
+    const pct = Math.min(1, blocked / 15);
+    endScreen({title:"Firewall Defense", score:`${blocked} blocked`, detail: blocked >= bestWave && blocked ? "New best this session!" : `Best this session: ${bestWave}`, missed, replay:firewall, pct, xpEarned: xp - startXP});
+  }
+  spawn();
+  timer = setInterval(() => {
+    if (busy || !document.body.contains(arena)) return;
+    const p = (Date.now() - threatStart) / fallMs;
+    const maxY = arena.clientHeight - wall.offsetHeight - threat.offsetHeight - 6;
+    threat.style.transform = `translateY(${Math.max(0, maxY) * Math.min(1, p)}px)`;
+    if (p >= 1){
+      busy = true;
+      document.querySelector(`#fc [data-t="${CSS.escape(current.term)}"]`).classList.add("correct");
+      document.querySelectorAll("#fc .choice").forEach(x => x.disabled = true);
+      toast("💥 Attack got through!");
+      damage();
+      setTimeout(after, 1300);
+    }
+  }, 40);
+}
+
+// ===== Phish or Legit? =====
+function phishOrLegit(deck){
+  const ROUNDS = 12;
+  const senders = ["security@cyberhq.net","it-help@school.edu","alerts@netguard.org","admin@firewall.io","training@cyberhq.net","noreply@vocabvault.com"];
+  let order = [];
+  while (order.length < ROUNDS) order = order.concat(shuffle(deck));
+  const items = order.slice(0, ROUNDS).map(v => {
+    const legit = Math.random() < 0.5;
+    const fake = legit ? null : VOCAB.filter(x => x.term !== v.term)[Math.floor(Math.random()*(VOCAB.length-1))];
+    return {v, legit, shownDef: legit ? v.def : fake.def, from: senders[Math.floor(Math.random()*senders.length)]};
+  });
+  let i = 0, score = 0, startXP = xp;
+  const missed = [];
+  function draw(){
+    if (i >= items.length){
+      return endScreen({title:"Phish or Legit?", score:`${score} / ${items.length}`, detail:"emails sorted correctly", missed, replay:()=>phishOrLegit(deck), pct: score/items.length, xpEarned: xp - startXP});
+    }
+    const q = items[i];
+    show(`
+      ${topBar(`<span class="pill">📨 ${i+1} / ${items.length}</span>`)}
+      <p class="muted">Is this definition the real one for the term, or is it a phishing trick?</p>
+      <div class="mail" id="mail">
+        <div class="mail-head"><span>From: ${esc(q.from)}</span><b>${esc(q.v.term)}</b></div>
+        <div class="mail-body">${esc(q.shownDef)}</div>
+      </div>
+      <div class="verdict">
+        <button class="vbtn" data-a="legit">✅ Legit</button>
+        <button class="vbtn" data-a="phish">🎣 Phishy</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div id="ex"></div>
+      <button class="btn primary hidden" id="next">${i+1 < items.length ? "Next email" : "See results"}</button>`);
+    wireHome();
+    const btns = [...app.querySelectorAll(".vbtn")];
+    function answer(choice){
+      if (btns[0].disabled) return;
+      const ok = (choice === "legit") === q.legit;
+      btns.forEach(b => b.disabled = true);
+      const picked = btns.find(b => b.dataset.a === choice);
+      const right = btns.find(b => b.dataset.a === (q.legit ? "legit" : "phish"));
+      right.classList.add("correct");
+      const fb = document.getElementById("fb");
+      if (ok){
+        score++; correct(q.v.term);
+        fb.textContent = q.legit ? "✅ Correct, that one’s legit!" : "🎣 Phish caught! Nice eye.";
+        fb.className = "feedback ok";
+      } else {
+        picked.classList.add("wrong"); anim(document.getElementById("mail"), "shake");
+        missed.push(q.v.term); wrong(q.v.term);
+        fb.textContent = q.legit ? "😬 That one was actually legit." : "🚨 You got phished! That definition was fake.";
+        fb.className = "feedback no";
+      }
+      if (!q.legit){
+        document.getElementById("ex").innerHTML = `<div class="explain"><strong>Real definition of ${esc(q.v.term)}:</strong> ${esc(q.v.def)}</div>`;
+      }
+      const nx = document.getElementById("next"); nx.classList.remove("hidden"); nx.focus();
+      nx.onclick = () => { i++; draw(); };
+    }
+    btns.forEach(b => b.onclick = () => answer(b.dataset.a));
+    document.onkeydown = e => {
+      const k = e.key.toLowerCase();
+      if (k === "l") answer("legit");
+      if (k === "p") answer("phish");
+    };
+  }
+  draw();
+}
+
+// ===== Matching =====
+function matching(){
+  const set = shuffle(VOCAB).slice(0, 6);
+  const terms = shuffle(set), defs = shuffle(set);
+  let sel = null, mistakes = 0, left = set.length, startXP = xp;
+  const missed = [], start = Date.now();
+  show(`
+    ${topBar(`<span class="pill" id="clock">⏱️ 0s</span>`)}
+    <p class="muted">Tap a term, then tap its definition. Fewer mistakes and a faster time earn a time bonus.</p>
+    <div class="chips">${terms.map(v => `<button class="chip" data-t="${esc(v.term)}">${esc(v.term)}</button>`).join("")}</div>
+    <div class="choices">${defs.map(v => `<button class="choice" data-d="${esc(v.term)}">${esc(v.def)}</button>`).join("")}</div>`);
+  wireHome();
+  const clock = document.getElementById("clock");
+  timer = setInterval(() => clock.textContent = `⏱️ ${Math.floor((Date.now()-start)/1000)}s`, 500);
+  function pick(btn){
+    if (!sel){ sel = btn; btn.classList.add("sel"); return; }
+    if (sel === btn){ btn.classList.remove("sel"); sel = null; return; }
+    const sameSide = (sel.dataset.t && btn.dataset.t) || (sel.dataset.d && btn.dataset.d);
+    if (sameSide){ sel.classList.remove("sel"); sel = btn; btn.classList.add("sel"); return; }
+    const a = sel.dataset.t || sel.dataset.d, b = btn.dataset.t || btn.dataset.d;
+    const pair = [sel, btn]; sel = null;
+    if (a === b){
+      pair.forEach(x => x.classList.add("hidden"));
+      if (missed.includes(a)) { addXP(5); sfx.good(); } else correct(a);
+      if (--left === 0){
+        stopTimer();
+        const secs = Math.floor((Date.now()-start)/1000);
+        const bonus = Math.max(0, 60 - secs) + (mistakes === 0 ? 20 : 0);
+        if (bonus){ addXP(bonus); }
+        endScreen({title:"Matching", score:`${secs} seconds`, detail:`${mistakes} mistake${mistakes===1?"":"s"}${bonus?` · time bonus +${bonus}`:""}`, missed, replay:matching, pct: Math.max(0, 1 - mistakes/6), xpEarned: xp - startXP});
+      }
+    } else {
+      mistakes++;
+      const t = pair.find(x => x.dataset.t).dataset.t;
+      missed.push(t); wrong(t);
+      pair.forEach(x => { x.classList.remove("sel"); x.classList.add("flash"); anim(x, "shake"); });
+      setTimeout(() => pair.forEach(x => x.classList.remove("flash")), 600);
+    }
+  }
+  app.querySelectorAll("[data-t],[data-d]").forEach(b => b.onclick = () => pick(b));
+}
+
+// ===== Shared question round (quiz + scenarios) =====
+function questionRound({title, items, replay}){
+  let i = 0, score = 0, startXP = xp;
+  const missed = [];
+  function draw(){
+    if (i >= items.length){
+      return endScreen({title, score:`${score} / ${items.length}`, detail:`${Math.round(score/items.length*100)}% correct`, missed, replay, pct: score/items.length, xpEarned: xp - startXP});
+    }
+    const q = items[i];
+    show(`
+      ${topBar(`<span class="pill">${i+1} / ${items.length}</span>`)}
+      <div class="prompt ${q.big?"term":""}" id="pr"><span class="lbl">${esc(q.label)}</span>${esc(q.prompt)}</div>
+      <div class="choices">${q.choices.map((c,k) => `<button class="choice" data-k="${k}">${esc(c)}</button>`).join("")}</div>
+      <div class="feedback" id="fb"></div>
+      <button class="btn primary hidden" id="next">${i+1 < items.length ? "Next question" : "See results"}</button>`);
+    wireHome();
+    const btns = [...app.querySelectorAll(".choice")];
+    btns.forEach(b => b.onclick = () => {
+      const ok = +b.dataset.k === q.correct;
+      btns.forEach(x => x.disabled = true);
+      btns[q.correct].classList.add("correct"); anim(btns[q.correct], "pop");
+      const fb = document.getElementById("fb");
+      if (ok){
+        score++; correct(q.term);
+        fb.textContent = shuffle(["Correct! 🎯","Nailed it! ✅","Threat identified! 🛡️","Access granted! 🔓","Nice! 🔥"])[0];
+        fb.className = "feedback ok";
+      } else {
+        b.classList.add("wrong"); anim(b, "shake"); missed.push(q.term); wrong(q.term);
+        fb.textContent = `Not quite. The answer is: ${q.term}`; fb.className = "feedback no";
+      }
+      const nx = document.getElementById("next");
+      nx.classList.remove("hidden"); nx.focus();
+      nx.onclick = () => { i++; draw(); };
+    });
+  }
+  draw();
+}
+
+// ===== Code Breaker (guess the hidden term letter by letter) =====
+function codebreaker(){
+  const words = shuffle(VOCAB).slice(0, 7), MAX = 7, glyphs = "#$%&@*?!§¤";
+  let w = 0, cracked = 0, startXP = xp;
+  const missed = [];
+  function play(){
+    if (w >= words.length){
+      return endScreen({title:"Code Breaker", score:`${cracked} / ${words.length}`, detail:"terms decrypted", missed, replay:codebreaker, pct: cracked/words.length, xpEarned: xp - startXP});
+    }
+    const v = words[w], target = v.term.toUpperCase();
+    const need = new Set([...target].filter(c => /[A-Z]/.test(c)));
+    const guessed = new Set();
+    let left = MAX, over = false;
+    show(`
+      ${topBar(`<span class="pill">🔐 ${w+1} / ${words.length}</span>`)}
+      <div class="prompt"><span class="lbl">Decrypt the term that matches this definition</span>${esc(v.def)}</div>
+      <div class="slots" id="slots"></div>
+      <div class="bar"><span id="tries"></span><button class="btn small" id="hint">💡 Hint (costs 1 try)</button></div>
+      <div class="keys" id="keys">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(c => `<button class="key" data-k="${c}" aria-label="Guess ${c}">${c}</button>`).join("")}</div>
+      <div class="feedback" id="fb"></div>
+      <button class="btn primary hidden" id="next">${w+1 < words.length ? "Next code" : "See results"}</button>`);
+    wireHome();
+    const slots = document.getElementById("slots"), fb = document.getElementById("fb"), hintBtn = document.getElementById("hint");
+    function draw(){
+      slots.innerHTML = target.split(" ").map((word, wi) => `<span class="word">${[...word].map((c, i) => {
+        if (!/[A-Z]/.test(c)) return `<span class="slot punct">${esc(c)}</span>`;
+        return (guessed.has(c) || over) ? `<span class="slot open">${c}</span>` : `<span class="slot" aria-label="hidden letter">${glyphs[(i + wi*3) % glyphs.length]}</span>`;
+      }).join("")}</span>`).join("");
+      document.getElementById("tries").innerHTML = `<span class="stat">Tries left:</span> ${"🟩".repeat(left)}${"⬛".repeat(MAX-left)}`;
+    }
+    const solved = () => [...need].every(c => guessed.has(c));
+    function finish(win){
+      over = true; draw();
+      document.querySelectorAll(".key").forEach(k => k.disabled = true);
+      hintBtn.disabled = true;
+      if (win){ cracked++; correct(v.term); fb.textContent = "🔓 ACCESS GRANTED! Code cracked."; fb.className = "feedback ok"; anim(slots, "pop"); }
+      else { missed.push(v.term); wrong(v.term); fb.textContent = `🔒 LOCKED OUT. The term was: ${v.term}`; fb.className = "feedback no"; }
+      const nx = document.getElementById("next"); nx.classList.remove("hidden"); nx.focus();
+      nx.onclick = () => { w++; play(); };
+    }
+    function reveal(c){
+      guessed.add(c);
+      const key = document.querySelector(`.key[data-k="${c}"]`); key.disabled = true; key.classList.add("hit");
+    }
+    function guess(c){
+      if (over || guessed.has(c)) return;
+      if (need.has(c)){ reveal(c); sfx.flip(); draw(); if (solved()) finish(true); }
+      else {
+        guessed.add(c);
+        const key = document.querySelector(`.key[data-k="${c}"]`); key.disabled = true; key.classList.add("miss");
+        left--; sfx.bad(); draw(); anim(slots, "shake");
+        if (left <= 0) finish(false);
+      }
+    }
+    document.querySelectorAll(".key").forEach(k => k.onclick = () => guess(k.dataset.k));
+    hintBtn.onclick = () => {
+      if (over) return;
+      if (left <= 1){ toast("Not enough tries left for a hint"); return; }
+      const hidden = [...need].filter(c => !guessed.has(c));
+      left--; reveal(hidden[Math.floor(Math.random()*hidden.length)]);
+      draw(); if (solved()) finish(true);
+    };
+    document.onkeydown = e => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const c = e.key.length === 1 ? e.key.toUpperCase() : "";
+      if (/^[A-Z]$/.test(c)) guess(c);
+    };
+    draw();
+  }
+  play();
+}
+
+function scenarios(){
+  const items = shuffle(SCENARIOS).map((s, n) => {
+    const pool = shuffle([s.answer, ...otherTerms(s.answer, 3)]);
+    return {term:s.answer, label:`🕵️ Case file #${n+1}: which term fits?`, prompt:s.text, choices:pool, correct:pool.indexOf(s.answer)};
+  });
+  questionRound({title:"Scenario challenge", items, replay:scenarios});
+}
+
+// ===== Speed round =====
+function speed(){
+  const total = 60, end = Date.now() + total*1000;
+  let score = 0, tries = 0, busy = false, last = null, startXP = xp;
+  const missed = [];
+  show(`
+    ${topBar(`<span class="pill" id="sc0">⚡ 0</span>`)}
+    <div class="timerbar"><i id="tb"></i></div>
+    <div class="prompt" id="sp"></div>
+    <div class="choices" id="sc"></div>`);
+  wireHome();
+  const tb = document.getElementById("tb");
+  function next(){
+    let v; do { v = VOCAB[Math.floor(Math.random()*VOCAB.length)]; } while (v === last);
+    last = v;
+    const pool = shuffle([v.term, ...otherTerms(v.term, 3)]);
+    document.getElementById("sp").innerHTML = `<span class="lbl">Which term?</span>${esc(v.def)}`;
+    const sc = document.getElementById("sc");
+    sc.innerHTML = pool.map(t => `<button class="choice" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+    sc.querySelectorAll(".choice").forEach(b => b.onclick = () => {
+      if (busy) return; busy = true; tries++;
+      const ok = b.dataset.t === v.term;
+      if (ok){ score++; b.classList.add("correct"); correct(v.term); }
+      else {
+        b.classList.add("wrong"); anim(b, "shake"); missed.push(v.term); wrong(v.term);
+        sc.querySelector(`[data-t="${CSS.escape(v.term)}"]`).classList.add("correct");
+      }
+      document.getElementById("sc0").textContent = `⚡ ${score}`;
+      setTimeout(() => { busy = false; if (Date.now() < end) next(); }, ok ? 250 : 900);
+    });
+  }
+  next();
+  timer = setInterval(() => {
+    const leftMs = end - Date.now();
+    tb.style.width = Math.max(0, leftMs/(total*1000)*100) + "%";
+    if (leftMs <= 0){
+      stopTimer();
+      const isBest = score > bestSpeed; if (isBest) bestSpeed = score;
+      endScreen({title:"Speed round", score:`${score} correct`, detail: isBest && score ? "New best this session!" : `Best this session: ${bestSpeed}`, missed, replay:speed, pct: tries ? Math.min(1, score/15) : 0, xpEarned: xp - startXP});
+    }
+  }, 100);
+}
+
+home();
+</script>
+</body>
+</html>
